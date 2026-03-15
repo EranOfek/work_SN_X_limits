@@ -29,6 +29,7 @@ AperArea     = pi.*Args.AperRadius(:).'.^2;
 Ntns = numel(TNS);
 FoundCounter = 0;
 K            = 0;
+tic;
 for Itns=1:1:1000
     %Ntns
     RA   = TNS.ra(Itns);
@@ -184,6 +185,7 @@ for Itns=1:1:1000
     end
 
 end
+toc
 
 %%
 
