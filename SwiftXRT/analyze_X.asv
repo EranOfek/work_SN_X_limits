@@ -17,8 +17,8 @@ Args.PauseDownload = 5;
 Args.FileTemplate  = '*pcw*po_cl.evt';
 Args.PixSize       = 2.36;  % Swift-XRT [arcsec/pix]
 Args.FieldRadius   = 0.15; % removing near edge / 0.196;  % [deg]
-Args.Annulus       = [30 120];  % arcsec
-Args.AperRadius    = [5 9 13];    % arcsec
+Args.Annulus       = [15 120];  % arcsec
+Args.AperRadius    = [5 10];    % arcsec
 
 RAD = 180./pi;
 ARCSEC_DEG = 3600;
@@ -30,7 +30,7 @@ Ntns = numel(TNS);
 FoundCounter = 0;
 K            = 0;
 tic;
-for Itns=1:1:1e4
+for Itns=1:1:100
     %Ntns
     RA   = TNS.ra(Itns);
     Dec  = TNS.declination(Itns);
@@ -62,7 +62,7 @@ for Itns=1:1:1e4
                         DownloadNotFinshed = true;
                         while DownloadNotFinshed
                             PathObsID = io.files.findDirBySubString(ListObsID{Iobsid});
-                             if any(contains(PathObsID,'wget')) || numel(PathObsID)>1 || any(contains(PathObsID,'evt.gz'))
+                             if any(contains(PathObsID,'wget')) || numel(PathObsID)>1
                                 % not done yet
                                 pause(Args.PauseDownload);
                             else
@@ -75,7 +75,6 @@ for Itns=1:1:1e4
                         try
                             cd(PathObsID{1});
                         catch ME
-                            ME
                             Itns
                             ListObsID{Iobsid}
                            
@@ -104,8 +103,7 @@ for Itns=1:1:1e4
                                 % energy cut
                                 PL = PL.pi2energy;
                                 PL.selectEnergy([200 8000]);
-                                %[Nph,NphG] = PL.nphotons;  % don't use -
-                                %remove bad times
+                                [Nph,NphG] = PL.nphotons;
                                 % Add RA/Dec to catalog
                                 PL.addSkyCoo
                                 % populate the image field, X/Y correspinds to image [default is sky coo]
@@ -182,11 +180,7 @@ for Itns=1:1:1e4
 
                             %end
                             catch ME
-                                ME
-                                [Itns]
-                                ListObsID{Iobsid}
-                           
-                                error('Cant read/analyze');
+                                visit_images [Itns]
                             end
 
 
